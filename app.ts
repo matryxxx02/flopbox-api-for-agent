@@ -1,16 +1,31 @@
-import { Drash, FTPClient, serve } from "./deps.ts";
+import { Drash, FTPClient, serve } from "./utils/deps.ts";
 import { TodoList } from "./todo.ts";
+import Servers from "./routes/servers.ts";
+import Path from "./routes/path.ts";
+
+const port = 8080;
 
 const server = new Drash.Http.Server({
   response_output: "application/json",
-  resources: [TodoList],
+  resources: [Servers, Path],
+  logger: new Drash.CoreLoggers.ConsoleLogger({
+    enabled: true,
+    level: "all",
+    tag_string: "{datetime} | {level} |",
+    tag_string_fns: {
+      datetime() {
+        return new Date().toISOString().replace("T", " ");
+      },
+    },
+  }),
 });
 
 server.run({
   hostname: "localhost",
-  port: 8080,
+  port,
 });
-console.log("SERVER REDAY ✅");
+console.log(`SERVER HOST ON PORT ${port} ✅`);
+
 // const s = serve({ port: 8000 });
 // console.log("http://localhost:8000/");
 

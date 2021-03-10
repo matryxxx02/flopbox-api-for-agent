@@ -1,4 +1,4 @@
-import { Drash } from "./deps.ts";
+import { Drash } from "./utils/deps.ts";
 
 let todos = [
   {

@@ -26,7 +26,7 @@ Servers :
 |GET		 |  `/`                         | Affiche tous les serveurs |
 |POST		 |  `/`                         | Créer un nouveau server |
 |PUT		 |  `/{alias}`                  | Mettre à jour l'alias ou l'URL du server |
-|GET		 |  `/{alias}/{filePah}`        | Télécharger un fichier ou un répertoire|
-|POST		 |  `/{alias}/{filePah}`        | Envoyer un nouveau fichier ou repertoire |
-|PUT		 |  `/{alias}/{filePah}`        | Modifier / Renommer un fichier ou un répertoire existant |
-|DELETE		 |  `/{alias}/{filePah}`        | Supprimer un fichier |
+|GET		 |  `/{alias}/{filePath}`        | Télécharger un fichier ou un répertoire|
+|POST		 |  `/{alias}/{filePath}`        | Envoyer un nouveau fichier ou repertoire |
+|PUT		 |  `/{alias}/{filePath}`        | Modifier / Renommer un fichier ou un répertoire existant |
+|DELETE		 |  `/{alias}/{filePath}`        | Supprimer un fichier |
