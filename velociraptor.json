@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "deno run --allow-net --allow-write --unstable app.ts ",
-        "dev": "deno run --allow-net --allow-write --unstable --watch app.ts"
+        "start": "deno run --allow-net --allow-write --allow-read --unstable app.ts ",
+        "dev": "deno run --allow-net --allow-write --allow-read --unstable --watch app.ts"
     }
 }

@@ -37,8 +37,8 @@ paths:
         schema:
           $ref: '#/definitions/Server'
       responses:
-        204:
-          description: ok
+        201:
+          description: Server created
         400:
           description: Invalid server supplied
         409:
@@ -167,8 +167,8 @@ paths:
         required: false
         type: file
       responses:
-        204:
-          description: Successful operation
+        201:
+          description: file or directory created
         405:
           description: Invalid input
         409:

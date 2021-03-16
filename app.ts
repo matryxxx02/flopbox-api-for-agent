@@ -1,5 +1,4 @@
 import { Drash, FTPClient, serve } from "./utils/deps.ts";
-import { TodoList } from "./todo.ts";
 import Servers from "./routes/servers.ts";
 import Path from "./routes/path.ts";
 
