@@ -3,8 +3,14 @@ import { FTPClient } from "../utils/deps.ts";
 export default class pathController {
   client: FTPClient;
 
-  constructor(host: string, port: number) {
-    this.client = new FTPClient(host, { port });
+  constructor(
+    host: string,
+    port: number,
+    user?: string,
+    pass?: string,
+    mode?: "active" | "passive",
+  ) {
+    this.client = new FTPClient(host, { port, user, pass, mode });
   }
 
   async connectToServer() {
