@@ -1,34 +1,72 @@
-import { Drash } from "../utils/deps.ts";
+import pathController from "../controllers/pathController.ts";
 import db from "../utils/db.ts";
 import Server from "../models/Server.ts";
-import pathController from "../controllers/pathController.ts";
+import { Router } from "../utils/deps.ts";
 
-export default class Path extends Drash.Http.Resource {
-  static paths = ["/servers/:alias/?"];
+const router = Router();
+const pathUrl = "/:alias/:path(*)";
 
-  public GET() {
-    console.log("path");
-    const alias = String(this.request.getPathParam("alias"));
-    const path = String(this.request.getPathParam("path"));
-    console.log(String(this.request.getUrlPath(this.request)));
-    console.log({ alias, path });
-
-    // const collection = await db.getCollection<Server>("servers");
-    // const url = collection.findOne({ alias }).url as string;
-    // console.log(url);
-    // const clientFtp = new pathController(url, 21);
-    // clientFtp.connectToServer();
-    // this.response.body = clientFtp.downloadFile(path);
-    this.response.body = "okk";
-    return this.response;
+router.get(pathUrl, async (req, res) => {
+  const { alias, path } = req.params;
+  const collection = await db.getCollection<Server>("servers");
+  const url = collection.findOne({ alias }).url as string;
+  const clientFtp = new pathController(url, 21);
+  await clientFtp.connectToServer();
+  try {
+    const data = await clientFtp.downloadFile(path);
+    res.setStatus(200).send(data);
+  } catch (err) {
+    if (err.code === 550) {
+      res.setStatus(404).json("file or directory not exist.");
+    } else {
+      res.setStatus(500).json("Internal error.");
+    }
   }
+});
 
-  public POST() {
-    console.log("PUSH NEW FILE");
-    const file = this.request.getBodyFile("file");
-    console.log(file);
-    return this.response;
-  }
-  public PUT() {}
-  public DELETE() {}
-}
+router.post(pathUrl, async (req, res) => {
+  const { alias, path } = req.params;
+  console.log("PUSH NEW FILE");
+  const file = req.body.file;
+  console.log(file);
+  const collection = await db.getCollection<Server>("servers");
+  const url = collection.findOne({ alias }).url as string;
+  const clientFtp = new pathController(url, 21);
+  await clientFtp.connectToServer();
+  const data = await clientFtp.uploadFile(path, file);
+  console.log(data);
+  res.setStatus(200).json({
+    success: "true",
+    data: "camarche",
+  });
+});
+
+router.put(pathUrl, async (req, res) => {
+  const { alias, path } = req.params;
+  const { newName } = req.body;
+  const collection = await db.getCollection<Server>("servers");
+  const url = collection.findOne({ alias }).url as string;
+  const clientFtp = new pathController(url, 21);
+  await clientFtp.connectToServer();
+  const data = await clientFtp.renameFile(path, newName);
+  res.setStatus(200).json({
+    success: "true",
+    data: "camarche",
+  });
+});
+
+router.delete(pathUrl, async (req, res) => {
+  const { alias, path } = req.params;
+  const collection = await db.getCollection<Server>("servers");
+  const url = collection.findOne({ alias }).url as string;
+  const clientFtp = new pathController(url, 21);
+  await clientFtp.connectToServer();
+  const data = await clientFtp.deleteFile(path);
+  console.log(data);
+  res.setStatus(200).json({
+    success: "true",
+    data: "camarche",
+  });
+});
+
+export default router;

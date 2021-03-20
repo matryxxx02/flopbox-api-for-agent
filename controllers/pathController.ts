@@ -15,7 +15,6 @@ export default class pathController {
 
   async connectToServer() {
     await this.client.connect();
-    console.log("Connected");
   }
 
   async downloadFile(path: string) {
@@ -34,15 +33,3 @@ export default class pathController {
     return await this.client.rm(path);
   }
 }
-
-// const client = new FTPClient("ftp.ubuntu.com");
-// await client.connect();
-// console.log("Connected");
-
-// console.log("Downloading...");
-// let file = await Deno.open("./5MB.ico", {
-//   create: true,
-//   write: true,
-// });
-// let stream = await client.downloadStream("/cdimage/favicon.ico");
-// await Deno.copy(stream, file);
