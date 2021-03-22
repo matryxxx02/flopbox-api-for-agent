@@ -1,4 +1,4 @@
-import { FTPClient } from "../utils/deps.ts";
+import { FTPClient, JSZip } from "../utils/deps.ts";
 
 export default class pathController {
   client: FTPClient;
@@ -17,18 +17,51 @@ export default class pathController {
    * connect to FTP server 
    */
   async connectToServer() {
-    await this.connectToServer();
     await this.client.connect();
   }
 
   /**
-   * download 
+   * download
    * @param path 
    * @returns 
    */
-  async downloadFile(path: string) {
+  async downloadFile(path: string): Promise<Uint8Array> {
     await this.connectToServer();
     return await this.client.download(path);
+  }
+
+  async downloadDir(path: string) {
+    const zip = new JSZip();
+    await this.makeZip(path, zip);
+    await zip.writeZip(this.pathToName(path) + ".zip");
+    console.log(zip);
+  }
+
+  async makeZip(path: string, folder: JSZip) {
+    const dir = await this.listDir(path);
+    let i = 0;
+    for (const filepath of dir) {
+      i++;
+      console.log(filepath);
+      if (filepath.includes(".")) {
+        const file = await this.client.download(filepath);
+        folder.addFile(this.pathToName(filepath), file);
+      } else {
+        //appel recusif
+        const img = folder.folder(this.pathToName(filepath));
+        await this.makeZip(filepath, img);
+      }
+    }
+  }
+
+  private pathToName(path: string): string {
+    const splitPath = path.split("/");
+    return splitPath[splitPath.length - 1];
+  }
+
+  async listDir(path: string) {
+    await this.connectToServer();
+    return await this.client.list(path);
   }
 
   /**

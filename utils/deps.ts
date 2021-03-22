@@ -15,3 +15,5 @@ export {
   assertEquals,
 } from "https://deno.land/std@0.89.0/testing/asserts.ts";
 export { assertThrowsAsync } from "https://deno.land/std@0.90.0/testing/asserts.ts";
+export { JSZip } from "https://deno.land/x/jszip/mod.ts";
+export * as bcrypt from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
