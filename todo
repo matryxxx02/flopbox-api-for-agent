@@ -1,0 +1,27 @@
+[x] Je peux enregistrer un nouveau serveur FTP dans la plate-forme FlopBox
+[x]	Je peux supprimer un serveur FTP de la plate-forme FlopBox
+[x]	Je peux me modifier une association FTP avec la plate-forme FlopBox
+[-]	Je peux me connecter à un serveur FTP enregistré via la plate-forme FlopBox
+[-]	La plate-forme rejette ma connexion si mon utilisateur est inconnu
+[-]	La plate-forme rejette ma connexion si mon mot de passe est incorrect
+[-] LST	Je peux lister le contenu d'un répertoire stocké dans un serveur FTP distant
+[x]	Je peux récupérer un fichier texte via la plate-forme FlopBox
+[x]	Je peux récupérer un fichier binaire (image) via la plate-forme FlopBox
+[-]	Je peux récupérer un répertoire complet via la plate-forme FlopBox
+[-]	Je peux stocker un fichier texte dans un serveur FTP enregistré
+[-]	Je peux stocker un fichier binaire (e.g., image) dans un serveur FTP enregistré
+[-]	Je peux stocker un répertoire complet dans un serveur FTP enregistré
+[-]	Je peux renommer un fichier distant via la plate-forme FlopBox
+[-]	Je peux créer un répertoire distant via la plate-forme FlopBox
+[-]	Je peux renommer un répertoire distant via la plate-forme FlopBox
+[-]	Je peux supprimer un répertoire distant via la plate-forme FlopBox
+[-]	Je peux couper proprement la connexion (sans crasher les serveurs)
+[-]	Je peux spécifier le port du serveur FTP associé à la plate-forme
+[x]	Je peux configurer l'URL du serveur FTP associé à la plate-forme
+[x]	Le plate-forme FlopBox supporte les modes ACTIF et PASSIF
+[x]	La plate-forme supporte la connexion de plusieurs clients simultanés
+[-]	Le code de la plate-forme compile correctement avec Maven
+[-]	Le code de la plate-forme est documenté (Readme.md, Javadoc)
+[-]	Le code de la plate-forme est proprement testé (tests unitaires sous JUnit)
+[-]	Le code de la plate-forme est suit les principes de conception objet
+[x]	Le code de la plate-forme FlopBox s'exécute

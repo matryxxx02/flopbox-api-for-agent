@@ -1,23 +1,33 @@
 import db from "../utils/db.ts";
 import Server from "../models/Server.ts";
-import { Collection } from "../utils/deps.ts";
 
 export default class serversController {
-  constructor(servers: Collection<Server>) {
-    this.servers = servers;
-  }
-
-  static async build(): Promise<Collection<Server>> {
+  async getAll(): Promise<Array<Server>> {
     const serversCollection = await db.getCollection<Server>("servers");
-    console.log(serversCollection);
-    return new serversController(serversCollection);
+    return serversCollection.findMany((server: Server) => server.url != null)
+      .value();
   }
 
-  get servers(): Array<Server> {
-    return this.servers;
+  async getOne(alias: string): Promise<Server> {
+    const serversCollection = await db.getCollection<Server>("servers");
+    return serversCollection.findOne({ alias });
   }
 
-  set servers(servers: Array<Server>) {
-    this.servers = servers;
+  async insertOne(alias: string, url: string): Promise<void> {
+    const serversCollection = await db.getCollection<Server>("servers");
+    await serversCollection.insertOne({ alias, url });
+  }
+
+  async updateOne(alias: string, server: Server): Promise<void> {
+    const serversCollection = await db.getCollection<Server>("servers");
+    await serversCollection.updateOne(
+      (el: Server) => el.alias === alias,
+      server,
+    );
+  }
+
+  async deleteOne(alias: string): Promise<void> {
+    const serversCollection = await db.getCollection<Server>("servers");
+    await serversCollection.deleteOne({});
   }
 }
