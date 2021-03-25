@@ -2,6 +2,7 @@
     "scripts": {
         "start": "deno run --allow-net --allow-write --allow-read --unstable app.ts ",
         "dev": "deno run --allow-net --allow-write --allow-read --unstable --watch app.ts",
-        "test": "deno test --allow-net --allow-write --allow-read --unstable tests/"
+        "test": "deno test --allow-net --allow-write --allow-read --unstable tests/",
+        "build": "deno compile --allow-net --allow-write --allow-read --unstable -o build/flopbox ./app.ts"
     }
 }
