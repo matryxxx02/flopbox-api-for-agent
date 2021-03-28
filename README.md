@@ -1,17 +1,29 @@
 # FlopBox
 
+video démo : 
+
 REST API for FTP Server in Deno js
 
-Vous pouvez tester l'application directement via postman, il vous suffit d'importer le fichier flopbox.postman_collection pour avoir toutes les requetes.
+Vous pouvez tester l'application directement via postman, **il vous suffit d'importer le fichier flopbox.postman_collection** pour avoir toutes les requetes.
 
-Pour executer l'application il suffit d'aller dans `/build` et executer l'executable qui convient a votre OS (.exe et .sh disponible).
+Pour executer l'application il suffit d'aller dans `/build` et executer l'executable qui convient a votre OS **(.exe et .sh disponible)**.
+**Veuillez vous assurer que le port 8080 est disponible**
 
 # Installation & Exécution
 
 - Installer [deno](https://deno.land/#installation)
 
-- Exécuter `deno app.ts`
+- Exécuter `deno run --allow-net --allow-write --allow-read --unstable app.ts`
 
+- Pour simplifier l'execution de script il vous suffit d'installer [velociraptor](https://deno.land/x/velociraptor@1.0.0-beta.16#install) 
+
+- Pour lancer les tests : `vr test`
+
+- Pour lancer l'appli : `vr start`
+
+- Pour compiler un executable dans le dossier build : `vr build` 
+
+- Pour generer la doc en json : `vr doc` 
 
 ## Routes :
 
@@ -33,7 +45,19 @@ Servers :
 
 # Test :
 
-`deno test` 
+`deno test --allow-net --allow-write --allow-read --unstable tests/`
+<br> ou 
+<br> `vr test` 
 
 # Code Samples :
 
+# Documentation :
+
+la documentation est sous format json dans `doc/doc.json`. <br>
+Pour voir la documentation en format html il suffit de lancer la commande {à venir}
+
+# Librairies utilisées :
+
+- [Client FTP](https://deno.land/x/ftpc@v1.2.0/)
+- [File db](https://deno.land/x/filedb/)
+- [Opine](https://github.com/asos-craigmorten/opine)

@@ -5,6 +5,7 @@ import { Router } from "../utils/deps.ts";
 const router = Router();
 const pathUrl = "/:alias/:path(*)?";
 const serversDb = new serversController();
+
 const handleError = (res: any, err: any) => {
   console.error(err);
   switch (err?.code) {
@@ -17,18 +18,25 @@ const handleError = (res: any, err: any) => {
   }
 };
 
-router.get(pathUrl, async (req, res) => {
+//TODO : move in to middleware
+const findServer = async (req: any, res: any) => {
   const login = req.get("Authorization")?.split(":")[0] || "anonymous";
   const password = req.get("Authorization")?.split(":")[1] || "";
-  const { alias, path } = req.params;
+  const { alias } = req.params;
   const port = req.query.port || 21;
-  const action = req.query.action || "list";
   const url = (await serversDb.getOne(alias)).url;
   if (!url) {
     throw res.setStatus(404).json("server not exist.");
   }
 
-  const clientFtp = new pathController(url, port, login, password);
+  return new pathController(url, port, login, password);
+};
+
+router.get(pathUrl, async (req, res) => {
+  const { path } = req.params;
+  const action = req.query.action || "list";
+  const clientFtp = await findServer(req, res);
+
   if (!["list", "dl"].includes(action)) {
     throw res.setStatus(400).json(
       "action param only accept 'dl' and 'list' value",
@@ -57,19 +65,11 @@ router.get(pathUrl, async (req, res) => {
 });
 
 router.post(pathUrl, async (req: any, res) => {
-  const login = req.get("Authorization")?.split(":")[0] || "anonymous";
-  const password = req.get("Authorization")?.split(":")[1] || "";
-  const { alias, path } = req.params;
-  const port = req.query.port || 21;
-  console.log("PUSH NEW FILE");
-  const file = req.file;
-  console.log(req, req.r.buf);
-  const url = (await serversDb.getOne(alias)).url;
-  if (!url) {
-    throw res.setStatus(404).json("server not exist.");
-  }
+  const { path } = req.params;
+  const file = await req.r.readFull(req.r.w);
+  await Deno.writeFile("kaka.txt", file);
+  const clientFtp = await findServer(req, res);
 
-  const clientFtp = new pathController(url, port, login, password);
   try {
     const data = await clientFtp.uploadFile(path, file);
     console.log(data);
@@ -80,19 +80,12 @@ router.post(pathUrl, async (req: any, res) => {
 });
 
 router.put("/:alias/:path(*)", async (req, res) => {
-  const login = req.get("Authorization")?.split(":")[0] || "anonymous";
-  const password = req.get("Authorization")?.split(":")[1] || "";
-  const { alias, path } = req.params;
-  const port = req.query.port || 21;
+  const { path } = req.params;
   const { newName } = req.body;
-  const url = (await serversDb.getOne(alias)).url;
   if (!newName) {
     throw res.setStatus(400).json("newName is required.");
   }
-  if (!url) {
-    throw res.setStatus(404).json("server not exist.");
-  }
-  const clientFtp = new pathController(url, port, login, password);
+  const clientFtp = await findServer(req, res);
   try {
     await clientFtp.renameFile(path, newName);
     res.setStatus(204).send();
@@ -102,15 +95,10 @@ router.put("/:alias/:path(*)", async (req, res) => {
 });
 
 router.delete("/:alias/:path(*)", async (req, res) => {
-  const login = req.get("Authorization")?.split(":")[0] || "anonymous";
-  const password = req.get("Authorization")?.split(":")[1] || "";
-  const { alias, path } = req.params;
+  const { path } = req.params;
   const port = req.query.port || 21;
-  const url = (await serversDb.getOne(alias)).url;
-  if (!url) {
-    throw res.setStatus(404).json("server not exist.");
-  }
-  const clientFtp = new pathController(url, port, login, password);
+  const clientFtp = await findServer(req, res);
+
   try {
     const data = await clientFtp.deleteFile(path);
     res.setStatus(204).send();
