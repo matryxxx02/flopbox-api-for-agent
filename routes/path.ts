@@ -18,36 +18,28 @@ const handleError = (res: any, err: any) => {
 };
 
 router.get(pathUrl, async (req, res) => {
-  const login = req.get("Authorization")?.split(":")[0] || "anonymous";
-  const password = req.get("Authorization")?.split(":")[1] || "";
-  const { alias, path } = req.params;
-  const port = req.query.port || 21;
+  const { path } = req.params;
   const action = req.query.action || "list";
-  const url = (await serversDb.getOne(alias))?.url;
 
-  if (!url) {
-    throw res.setStatus(404).json("server not exist.");
-  }
   if (!["list", "dl"].includes(action)) {
     throw res.setStatus(400).json(
       "action param only accept 'dl' and 'list' value",
     );
   }
 
-  const clientFtp = new pathController(url, port, login, password);
-  const file = path.includes(".");
+  const file = path?.includes(".") || "";
   try {
     let data;
     if (file) {
-      data = await clientFtp.downloadFile(path);
+      data = await req.clientFtp.downloadFile(path);
     } else {
       if (action === "dl") {
         console.log("dl");
         //TODO : send a zip file of dir
-        await clientFtp.downloadDir(path);
+        await req.clientFtp.downloadDir(path);
         data = "zip";
       } else {
-        data = await clientFtp.listDir(path);
+        data = await req.clientFtp.listDir(path);
       }
     }
     res.setStatus(200).send(data);
