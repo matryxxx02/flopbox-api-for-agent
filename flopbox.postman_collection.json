@@ -1,0 +1,270 @@
+{
+	"info": {
+		"_postman_id": "bd6a1852-1392-4d89-a71c-e64ee1a91d32",
+		"name": "flopbox",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get all servers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new server",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alias\":\"local\",\r\n    \"url\":\"localhost\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/servers/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "modify one server",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"alias\":\"local\",\r\n    \"url\":\"127.0.0.1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/servers/local",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"local"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete one server",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/servers/free",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"free"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download one file from ftp server",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/ubuntu/cdimage/favicon.ico",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"ubuntu",
+						"cdimage",
+						"favicon.ico"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list one directory from ftp server",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/ubuntu/cdimage/?action=list",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"ubuntu",
+						"cdimage",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "list"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "download one repo from ftp server",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/local/testdl/?action=dl",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"local",
+						"testdl",
+						""
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "dl"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rename file or dir on ftp server",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newName\": \"testdr\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/servers/local/testdl/testdrrrrrrrrr",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"local",
+						"testdl",
+						"testdrrrrrrrrr"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload file or dir to ftp server",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/local/testdl/testdr?file",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"local",
+						"testdl",
+						"testdr"
+					],
+					"query": [
+						{
+							"key": "file",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete file or from server",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/servers/local/testdl/FOOTER.html",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"servers",
+						"local",
+						"testdl",
+						"FOOTER.html"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -6,7 +6,7 @@ REST API for FTP Server in Deno js
 
 - Installer [deno](https://deno.land/#installation)
 
-- Exeéuter `deno app.ts`
+- Exécuter `deno app.ts`
 
 
 ## Routes :

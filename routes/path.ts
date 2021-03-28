@@ -1,8 +1,6 @@
 import pathController from "../controllers/pathController.ts";
 import serversController from "../controllers/serversController.ts";
-
 import { Router } from "../utils/deps.ts";
-import findServer from "../middlewares/findServer.ts";
 
 const router = Router();
 const pathUrl = "/:alias/:path(*)?";
@@ -19,10 +17,18 @@ const handleError = (res: any, err: any) => {
   }
 };
 
-router.get(pathUrl, findServer, async (req: any, res: any) => {
-  const { path } = req.params;
+router.get(pathUrl, async (req, res) => {
+  const login = req.get("Authorization")?.split(":")[0] || "anonymous";
+  const password = req.get("Authorization")?.split(":")[1] || "";
+  const { alias, path } = req.params;
+  const port = req.query.port || 21;
   const action = req.query.action || "list";
+  const url = (await serversDb.getOne(alias)).url;
+  if (!url) {
+    throw res.setStatus(404).json("server not exist.");
+  }
 
+  const clientFtp = new pathController(url, port, login, password);
   if (!["list", "dl"].includes(action)) {
     throw res.setStatus(400).json(
       "action param only accept 'dl' and 'list' value",
@@ -33,15 +39,15 @@ router.get(pathUrl, findServer, async (req: any, res: any) => {
   try {
     let data;
     if (file) {
-      data = await req.clientFtp.downloadFile(path);
+      data = await clientFtp.downloadFile(path);
       res.setStatus(200).send(data);
     } else {
       if (action === "dl") {
-        data = await req.clientFtp.downloadDir(path);
+        data = await clientFtp.downloadDir(path);
         await res.download(data);
         Deno.remove(data);
       } else {
-        data = await req.clientFtp.listDir(path);
+        data = await clientFtp.listDir(path);
         res.setStatus(200).send(data);
       }
     }
