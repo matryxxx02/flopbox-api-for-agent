@@ -27,14 +27,16 @@ export default class pathController {
    */
   async downloadFile(path: string): Promise<Uint8Array> {
     await this.connectToServer();
-    return await this.client.download(path);
+    const data = await this.client.download(path);
+    return data;
   }
 
-  async downloadDir(path: string) {
+  async downloadDir(path: string): Promise<string> {
     const zip = new JSZip();
+    const zipname = this.pathToName(path) + ".zip";
     await this.makeZip(path, zip);
-    await zip.writeZip(this.pathToName(path) + ".zip");
-    console.log(zip);
+    await zip.writeZip(zipname);
+    return zipname;
   }
 
   async makeZip(path: string, folder: JSZip) {
@@ -42,12 +44,10 @@ export default class pathController {
     let i = 0;
     for (const filepath of dir) {
       i++;
-      console.log(filepath);
       if (filepath.includes(".")) {
         const file = await this.client.download(filepath);
         folder.addFile(this.pathToName(filepath), file);
       } else {
-        //appel recusif
         const img = folder.folder(this.pathToName(filepath));
         await this.makeZip(filepath, img);
       }
@@ -56,7 +56,9 @@ export default class pathController {
 
   private pathToName(path: string): string {
     const splitPath = path.split("/");
-    return splitPath[splitPath.length - 1];
+    return splitPath.length > 1 && splitPath[1] != ""
+      ? splitPath[splitPath.length - 1]
+      : splitPath[0];
   }
 
   async listDir(path: string) {
@@ -83,7 +85,14 @@ export default class pathController {
    */
   async renameFile(path: string, newName: string) {
     await this.connectToServer();
-    return await this.client.rename(path, newName);
+    const pathArray = path.split("/");
+    if (pathArray.length > 1 && pathArray[1] != "") {
+      pathArray[pathArray.length - 1] = newName;
+      const newPath = pathArray.join("/");
+      await this.client.rename(path, newPath);
+    } else {
+      return await this.client.rename(path, newName);
+    }
   }
 
   /**

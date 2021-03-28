@@ -16,3 +16,4 @@ export {
 } from "https://deno.land/std@0.89.0/testing/asserts.ts";
 export { assertThrowsAsync } from "https://deno.land/std@0.90.0/testing/asserts.ts";
 export { JSZip } from "https://deno.land/x/jszip/mod.ts";
+import { emptyDir } from "https://deno.land/std@0.91.0/fs/mod.ts";

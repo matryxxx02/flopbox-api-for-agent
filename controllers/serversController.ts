@@ -28,6 +28,6 @@ export default class serversController {
 
   async deleteOne(alias: string): Promise<void> {
     const serversCollection = await db.getCollection<Server>("servers");
-    await serversCollection.deleteOne({});
+    await serversCollection.deleteOne({ alias });
   }
 }

@@ -36,19 +36,19 @@ router.post(pathUrl, async (req, res) => {
 
 router.put(pathUrl, async (req, res) => {
   const alias = req.params.alias;
-  const { newAlias, url } = req.body;
+  const url = req.body.url;
+  const newAlias = req.body.alias;
   const servers = await serversDb.getAll();
 
   if (servers.length === 0) {
     return res.setStatus(404).json("Not found resource");
   }
-
+  console.log(url, newAlias);
   if (!url || !newAlias) {
     return res.setStatus(400).json(
       "This resource require the `alias` and `url` body param",
     );
   }
-
   await serversDb.updateOne(alias, { alias: newAlias, url });
   res.setStatus(204).send();
 });
