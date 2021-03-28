@@ -2,6 +2,10 @@
 
 REST API for FTP Server in Deno js
 
+Vous pouvez tester l'application directement via postman, il vous suffit d'importer le fichier flopbox.postman_collection pour avoir toutes les requetes.
+
+Pour executer l'application il suffit d'aller dans `/build` et executer l'executable qui convient a votre OS (.exe et .sh disponible).
+
 # Installation & Exécution
 
 - Installer [deno](https://deno.land/#installation)
@@ -30,3 +34,6 @@ Servers :
 # Test :
 
 `deno test` 
+
+# Code Samples :
+
