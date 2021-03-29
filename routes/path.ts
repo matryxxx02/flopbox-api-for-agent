@@ -24,7 +24,7 @@ const findServer = async (req: any, res: any) => {
   const password = req.get("Authorization")?.split(":")[1] || "";
   const { alias } = req.params;
   const port = req.query.port || 21;
-  const url = (await serversDb.getOne(alias)).url;
+  const url = (await serversDb.getOne(alias))?.url;
   if (!url) {
     throw res.setStatus(404).json("server not exist.");
   }
@@ -67,12 +67,10 @@ router.get(pathUrl, async (req, res) => {
 router.post(pathUrl, async (req: any, res) => {
   const { path } = req.params;
   const file = await req.r.readFull(req.r.w);
-  await Deno.writeFile("kaka.txt", file);
   const clientFtp = await findServer(req, res);
 
   try {
     const data = await clientFtp.uploadFile(path, file);
-    console.log(data);
     res.setStatus(204).send();
   } catch (err) {
     handleError(res, err);

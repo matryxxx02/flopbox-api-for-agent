@@ -39,11 +39,15 @@ router.put(pathUrl, async (req, res) => {
   const url = req.body.url;
   const newAlias = req.body.alias;
   const servers = await serversDb.getAll();
-
+  const server = await serversDb.getOne(alias);
+  if (!server) {
+    throw res.setStatus(404).json(
+      "Server not exist",
+    );
+  }
   if (servers.length === 0) {
     return res.setStatus(404).json("Not found resource");
   }
-  console.log(url, newAlias);
   if (!url || !newAlias) {
     return res.setStatus(400).json(
       "This resource require the `alias` and `url` body param",
@@ -56,6 +60,12 @@ router.put(pathUrl, async (req, res) => {
 router.delete(pathUrl, async (req, res) => {
   const alias = req.params.alias;
   try {
+    const server = await serversDb.getOne(alias);
+    if (!server) {
+      throw res.setStatus(404).json(
+        "Server not exist",
+      );
+    }
     await serversDb.deleteOne(alias);
   } catch (err) {
     console.error(err);
