@@ -15,3 +15,7 @@ export {
 } from "https://deno.land/std@0.89.0/testing/asserts.ts";
 export { assertThrowsAsync } from "https://deno.land/std@0.90.0/testing/asserts.ts";
 export { JSZip } from "https://deno.land/x/jszip/mod.ts";
+export {
+  isFormFile,
+  MultipartReader,
+} from "https://deno.land/std@0.95.0/mime/multipart.ts";

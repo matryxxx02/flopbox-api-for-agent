@@ -1,6 +1,6 @@
 import pathController from "../controllers/pathController.ts";
 import serversController from "../controllers/serversController.ts";
-import { Router } from "../utils/deps.ts";
+import { isFormFile, MultipartReader, Router } from "../utils/deps.ts";
 
 const router = Router();
 const pathUrl = "/:alias/:path(*)?";
@@ -66,15 +66,25 @@ router.get(pathUrl, async (req, res) => {
 
 router.post(pathUrl, async (req: any, res) => {
   const { path } = req.params;
-  const file = await req.r.readFull(req.r.w);
   const clientFtp = await findServer(req, res);
 
-  try {
-    const data = await clientFtp.uploadFile(path, file);
-    res.setStatus(204).send();
-  } catch (err) {
-    handleError(res, err);
+  //const file = await req.r.readFull(req.r.w);
+  const boundary = req.get("content-type").split("=").pop();
+  console.log(boundary);
+  // let data1 = await req.r.readFull(req.r.w);
+  const mr = new MultipartReader(req.body, boundary);
+  const form = await mr.readForm();
+  const fileData = form.file("file");
+  if (isFormFile(fileData)) {
+    try {
+      const data = await clientFtp.uploadFile(path, fileData.content!);
+      res.setStatus(204).send();
+    } catch (err) {
+      handleError(res, err);
+    }
   }
+
+  console.log(form.file("file"));
 });
 
 router.put("/:alias/:path(*)", async (req, res) => {
