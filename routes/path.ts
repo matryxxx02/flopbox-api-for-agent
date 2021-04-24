@@ -35,8 +35,8 @@ const findServer = async (req: any, res: any) => {
 router.get("/:alias/checksum/:path(*)?", async (req, res) => {
   const { path } = req.params;
   const clientFtp = await findServer(req, res);
-
   const file = path?.includes(".") || "";
+
   try {
     let data;
     if (file) {
@@ -87,23 +87,24 @@ router.post(pathUrl, async (req: any, res) => {
   const { path } = req.params;
   const clientFtp = await findServer(req, res);
 
-  //const file = await req.r.readFull(req.r.w);
   const boundary = req.get("content-type").split("=").pop();
-  console.log(boundary);
-  // let data1 = await req.r.readFull(req.r.w);
+  if (!boundary) {
+    return res.setStatus(400).send("You must send file in form-data");
+  }
   const mr = new MultipartReader(req.body, boundary);
   const form = await mr.readForm();
   const fileData = form.file("file");
+
   if (isFormFile(fileData)) {
     try {
-      const data = await clientFtp.uploadFile(path, fileData.content!);
+      await clientFtp.uploadFile(path, fileData.content!);
       res.setStatus(204).send();
     } catch (err) {
       handleError(res, err);
     }
+  } else {
+    return res.setStatus(500).send("Internal error.");
   }
-
-  console.log(form.file("file"));
 });
 
 router.put("/:alias/:path(*)", async (req, res) => {

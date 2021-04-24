@@ -30,6 +30,11 @@ export default class pathController {
     return data;
   }
 
+  /**
+   * 
+   * @param path directory path
+   * @returns path of zipfile
+   */
   async downloadDir(path: string): Promise<string> {
     const zip = new JSZip();
     const zipname = this.pathToName(path) + ".zip";
@@ -38,6 +43,11 @@ export default class pathController {
     return zipname;
   }
 
+  /**
+   * 
+   * @param filepath 
+   * @returns object contains filepath and his checksum (sha256) 
+   */
   async getFileChecksum(filepath: string): Promise<object> {
     await this.connectToServer();
     const file = await this.client.download(filepath);
@@ -47,12 +57,22 @@ export default class pathController {
     };
   }
 
+  /**
+   * 
+   * @param path 
+   * @returns Array of object contains filepath and his checksum (sha256) 
+   */
   async getAllFilesChecksum(path: string) {
     const checksums: object[] = [];
     await this.makeChecksum(path, checksums);
     return checksums;
   }
 
+  /**
+   * 
+   * @param path 
+   * @param folder recursive method for create zipfile
+   */
   async makeZip(path: string, folder: JSZip) {
     const dir = await this.listDir(path);
 
@@ -67,6 +87,11 @@ export default class pathController {
     }
   }
 
+  /**
+   * Recursive method for create Array of objects contains checksum of each file
+   * @param path 
+   * @param listOfChecksum list of checksum (for each file)
+   */
   async makeChecksum(path: string, listOfChecksum: Array<object>) {
     const dir = await this.listDir(path);
 
@@ -80,6 +105,11 @@ export default class pathController {
     }
   }
 
+  /**
+   * 
+   * @param path 
+   * @returns name of zip file
+   */
   private pathToName(path: string): string {
     const splitPath = path.split("/");
     return splitPath.length > 1 && splitPath[1] != ""
@@ -87,16 +117,21 @@ export default class pathController {
       : splitPath[0];
   }
 
+  /**
+   * For list all file of one directory
+   * @param path 
+   * @returns 
+   */
   async listDir(path: string) {
     await this.connectToServer();
     return await this.client.list(path);
   }
 
   /**
-   *  
+   * For upload file in ftp server
    * @param path 
    * @param data 
-   * @returns 
+   * @returns clientFTP result
    */
   async uploadFile(path: string, data: Uint8Array) {
     await this.connectToServer();
@@ -104,10 +139,10 @@ export default class pathController {
   }
 
   /**
-   * 
+   * For rename file in ftp server
    * @param path 
    * @param newName 
-   * @returns 
+   * @returns clientFTP result
    */
   async renameFile(path: string, newName: string) {
     await this.connectToServer();
@@ -122,9 +157,9 @@ export default class pathController {
   }
 
   /**
-   * 
+   * For delete file or directory
    * @param path 
-   * @returns 
+   * @returns clientFTP result
    */
   async deleteFile(path: string) {
     await this.connectToServer();
