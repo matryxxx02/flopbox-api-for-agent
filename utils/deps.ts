@@ -19,3 +19,4 @@ export {
   isFormFile,
   MultipartReader,
 } from "https://deno.land/std@0.95.0/mime/multipart.ts";
+export { Sha256 } from "https://deno.land/std/hash/sha256.ts";

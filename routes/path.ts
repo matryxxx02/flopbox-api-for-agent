@@ -1,6 +1,6 @@
 import pathController from "../controllers/pathController.ts";
 import serversController from "../controllers/serversController.ts";
-import { isFormFile, MultipartReader, Router } from "../utils/deps.ts";
+import { isFormFile, MultipartReader, Router, Sha256 } from "../utils/deps.ts";
 
 const router = Router();
 const pathUrl = "/:alias/:path(*)?";
@@ -31,6 +31,32 @@ const findServer = async (req: any, res: any) => {
 
   return new pathController(url, port, login, password);
 };
+
+router.get("/:alias/checksum/:path(*)?", async (req, res) => {
+  const { path } = req.params;
+  const action = req.query.action || "list";
+  const clientFtp = await findServer(req, res);
+
+  if (!["list", "dl"].includes(action)) {
+    throw res.setStatus(400).json(
+      "action param only accept 'dl' and 'list' value",
+    );
+  }
+
+  const file = path?.includes(".") || "";
+  try {
+    let data;
+    if (file) {
+      data = await clientFtp.getFileChecksum(path);
+      res.setStatus(200).send(data);
+    } else {
+      data = await clientFtp.getAllFilesChecksum(path);
+      res.setStatus(403).send(data);
+    }
+  } catch (err) {
+    handleError(res, err);
+  }
+});
 
 router.get(pathUrl, async (req, res) => {
   const { path } = req.params;

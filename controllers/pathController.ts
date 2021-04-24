@@ -1,5 +1,4 @@
-import { FTPClient, JSZip } from "../utils/deps.ts";
-
+import { FTPClient, JSZip, Sha256 } from "../utils/deps.ts";
 export default class pathController {
   client: FTPClient;
 
@@ -39,6 +38,19 @@ export default class pathController {
     return zipname;
   }
 
+  async getFileChecksum(filepath: string): Promise<object> {
+    const file = await this.client.download(filepath);
+    return {
+      filepath,
+      file: new Sha256().update(file).toString(),
+    };
+  }
+
+  async getAllFilesChecksum(path: string) {
+    const checksums: object[] = [];
+    return await this.makeChecksum(path, checksums);
+  }
+
   async makeZip(path: string, folder: JSZip) {
     const dir = await this.listDir(path);
     let i = 0;
@@ -50,6 +62,20 @@ export default class pathController {
       } else {
         const img = folder.folder(this.pathToName(filepath));
         await this.makeZip(filepath, img);
+      }
+    }
+  }
+
+  async makeChecksum(path: string, listOfChecksum: Array<object>) {
+    const dir = await this.listDir(path);
+    let i = 0;
+    for (const filepath of dir) {
+      i++;
+      if (filepath.includes(".")) {
+        const hashObj = await this.getFileChecksum(filepath);
+        listOfChecksum.push(hashObj);
+      } else {
+        await this.makeChecksum(filepath, listOfChecksum);
       }
     }
   }
