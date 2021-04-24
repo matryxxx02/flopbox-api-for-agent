@@ -39,6 +39,7 @@ export default class pathController {
   }
 
   async getFileChecksum(filepath: string): Promise<object> {
+    await this.connectToServer();
     const file = await this.client.download(filepath);
     return {
       filepath,
@@ -48,14 +49,14 @@ export default class pathController {
 
   async getAllFilesChecksum(path: string) {
     const checksums: object[] = [];
-    return await this.makeChecksum(path, checksums);
+    await this.makeChecksum(path, checksums);
+    return checksums;
   }
 
   async makeZip(path: string, folder: JSZip) {
     const dir = await this.listDir(path);
-    let i = 0;
+
     for (const filepath of dir) {
-      i++;
       if (filepath.includes(".")) {
         const file = await this.client.download(filepath);
         folder.addFile(this.pathToName(filepath), file);
@@ -68,9 +69,8 @@ export default class pathController {
 
   async makeChecksum(path: string, listOfChecksum: Array<object>) {
     const dir = await this.listDir(path);
-    let i = 0;
+
     for (const filepath of dir) {
-      i++;
       if (filepath.includes(".")) {
         const hashObj = await this.getFileChecksum(filepath);
         listOfChecksum.push(hashObj);

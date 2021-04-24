@@ -34,14 +34,7 @@ const findServer = async (req: any, res: any) => {
 
 router.get("/:alias/checksum/:path(*)?", async (req, res) => {
   const { path } = req.params;
-  const action = req.query.action || "list";
   const clientFtp = await findServer(req, res);
-
-  if (!["list", "dl"].includes(action)) {
-    throw res.setStatus(400).json(
-      "action param only accept 'dl' and 'list' value",
-    );
-  }
 
   const file = path?.includes(".") || "";
   try {
@@ -51,7 +44,7 @@ router.get("/:alias/checksum/:path(*)?", async (req, res) => {
       res.setStatus(200).send(data);
     } else {
       data = await clientFtp.getAllFilesChecksum(path);
-      res.setStatus(403).send(data);
+      res.setStatus(200).send(data);
     }
   } catch (err) {
     handleError(res, err);
