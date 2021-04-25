@@ -4,6 +4,13 @@ video démo : https://youtu.be/pySbuu2Q-bU
 
 REST API for FTP Server in Deno js
 
+# IMPORTANT 
+
+Cette version de l'API est prévu pour l'agent [flopbox](https://gitlab-etu.fil.univ-lille1.fr/phu/flopbox-agent-fernandes-phu).
+Une route checksum a été ajouté et l'upload des fichiers et désormais possible.
+La route checksum permet de lister tous les fichier et de renvoyé leur path ainsi qu'un hash en sha-256 du fichier.
+Ce hash nous permet de comparer dans l'agent les fichiers qui ont changé par rapport au locaux.
+
 Vous pouvez tester l'application directement via postman, **il vous suffit d'importer le fichier flopbox.postman_collection** pour avoir toutes les requetes.
 
 Pour executer l'application il suffit d'aller dans `/build` et executer l'executable qui convient a votre OS **(.exe et .sh disponible)**.

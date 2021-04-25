@@ -64,8 +64,8 @@ export default class pathController {
    */
   async getAllFilesChecksum(path: string) {
     const checksums: object[] = [];
-    await this.makeChecksum(path, checksums);
-    return checksums;
+    const res = await this.makeChecksum(path, checksums);
+    return res;
   }
 
   /**
@@ -92,7 +92,10 @@ export default class pathController {
    * @param path 
    * @param listOfChecksum list of checksum (for each file)
    */
-  async makeChecksum(path: string, listOfChecksum: Array<object>) {
+  async makeChecksum(
+    path: string,
+    listOfChecksum: Array<object>,
+  ): Promise<any> {
     const dir = await this.listDir(path);
 
     for (const filepath of dir) {
@@ -103,6 +106,7 @@ export default class pathController {
         await this.makeChecksum(filepath, listOfChecksum);
       }
     }
+    return listOfChecksum;
   }
 
   /**
