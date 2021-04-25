@@ -35,9 +35,12 @@ export default class pathController {
    * @param path directory path
    * @returns path of zipfile
    */
-  async downloadDir(path: string): Promise<string> {
+  async downloadDir(alias: string, path: string): Promise<string> {
     const zip = new JSZip();
-    const zipname = this.pathToName(path) + ".zip";
+    const zipname = path == ""
+      ? alias + ".zip"
+      : this.pathToName(path) + ".zip";
+    console.log({ zipname });
     await this.makeZip(path, zip);
     await zip.writeZip(zipname);
     return zipname;
@@ -64,8 +67,10 @@ export default class pathController {
    */
   async getAllFilesChecksum(path: string) {
     const checksums: object[] = [];
-    await this.makeChecksum(path, checksums);
-    return checksums;
+    await this.connectToServer();
+    const res = await this.makeChecksum(path, checksums);
+    this.client.close();
+    return res;
   }
 
   /**
@@ -92,7 +97,10 @@ export default class pathController {
    * @param path 
    * @param listOfChecksum list of checksum (for each file)
    */
-  async makeChecksum(path: string, listOfChecksum: Array<object>) {
+  async makeChecksum(
+    path: string,
+    listOfChecksum: Array<object>,
+  ): Promise<any> {
     const dir = await this.listDir(path);
 
     for (const filepath of dir) {
@@ -103,6 +111,7 @@ export default class pathController {
         await this.makeChecksum(filepath, listOfChecksum);
       }
     }
+    return listOfChecksum;
   }
 
   /**
@@ -123,8 +132,8 @@ export default class pathController {
    * @returns 
    */
   async listDir(path: string) {
-    await this.connectToServer();
-    return await this.client.list(path);
+    const list = await this.client.list(path);
+    return list;
   }
 
   /**
@@ -135,7 +144,9 @@ export default class pathController {
    */
   async uploadFile(path: string, data: Uint8Array) {
     await this.connectToServer();
-    return await this.client.upload(path, data);
+    const file = await this.client.upload(path, data);
+    this.client.close;
+    return file;
   }
 
   /**
@@ -163,6 +174,8 @@ export default class pathController {
    */
   async deleteFile(path: string) {
     await this.connectToServer();
-    return await this.client.rm(path);
+    const rm = await this.client.rm(path);
+    this.client.close();
+    return rm;
   }
 }

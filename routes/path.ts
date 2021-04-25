@@ -23,8 +23,9 @@ const findServer = async (req: any, res: any) => {
   const login = req.get("Authorization")?.split(":")[0] || "anonymous";
   const password = req.get("Authorization")?.split(":")[1] || "";
   const { alias } = req.params;
-  const port = req.query.port || 21;
+  const port = Number.parseInt(req.query.port) || 21;
   const url = (await serversDb.getOne(alias))?.url;
+
   if (!url) {
     throw res.setStatus(404).json("server not exist.");
   }
@@ -41,10 +42,10 @@ router.get("/:alias/checksum/:path(*)?", async (req, res) => {
     let data;
     if (file) {
       data = await clientFtp.getFileChecksum(path);
-      res.setStatus(200).send(data);
+      return res.setStatus(200).send(data);
     } else {
       data = await clientFtp.getAllFilesChecksum(path);
-      res.setStatus(200).send(data);
+      return res.setStatus(200).send(data);
     }
   } catch (err) {
     handleError(res, err);
@@ -52,7 +53,7 @@ router.get("/:alias/checksum/:path(*)?", async (req, res) => {
 });
 
 router.get(pathUrl, async (req, res) => {
-  const { path } = req.params;
+  const { path, alias } = req.params;
   const action = req.query.action || "list";
   const clientFtp = await findServer(req, res);
 
@@ -70,12 +71,14 @@ router.get(pathUrl, async (req, res) => {
       res.setStatus(200).send(data);
     } else {
       if (action === "dl") {
-        data = await clientFtp.downloadDir(path);
-        await res.download(data);
-        Deno.remove(data);
+        data = await clientFtp.downloadDir(alias, path);
+        console.log({ data });
+        return res.download(data);
+        //Deno.remove(data);
       } else {
+        await clientFtp.connectToServer();
         data = await clientFtp.listDir(path);
-        res.setStatus(200).send(data);
+        return res.setStatus(200).send(data);
       }
     }
   } catch (err) {
@@ -88,12 +91,16 @@ router.post(pathUrl, async (req: any, res) => {
   const clientFtp = await findServer(req, res);
 
   const boundary = req.get("content-type").split("=").pop();
+  console.log(boundary);
   if (!boundary) {
+    console.log("without boundary");
     return res.setStatus(400).send("You must send file in form-data");
   }
   const mr = new MultipartReader(req.body, boundary);
   const form = await mr.readForm();
   const fileData = form.file("file");
+
+  console.log(fileData);
 
   if (isFormFile(fileData)) {
     try {
